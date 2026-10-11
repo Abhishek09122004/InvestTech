@@ -17,7 +17,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" />
                 </svg>
             </div>
-            <span class="logo-text">AaiTech sandesh</span>
+            <span class="logo-text">InvestTech</span>
         </div>
 
         <!-- Ingestion Upload Card -->
@@ -40,34 +40,6 @@
             </div>
             <div class="progress-bar-bg">
                 <div class="progress-bar-fill" id="progressBarFill"></div>
-            </div>
-        </div>
-
-        <!-- YouTube Call to Action Card -->
-        <div class="yt-card">
-            <div class="yt-header">
-                <div class="yt-icon">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M23.498 6.163a3.003 3.003 0 00-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.516 0-9.387.507a3.003 3.003 0 00-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 002.11 2.11c1.871.507 9.387.507 9.387.507s7.517 0 9.387-.507a3.003 3.003 0 002.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                    </svg>
-                </div>
-                <div class="yt-meta">
-                    <span class="yt-channel-name">AaiTech</span>
-                    <span class="yt-badge">Sandesh Hase</span>
-                </div>
-            </div>
-            <div class="yt-body">
-                <p>Support our channel! Drop a like and subscribe for more deep-dive AI coding tutorials.</p>
-                <div class="yt-actions">
-                    <div class="yt-action-item" onclick="showToast('Liked!', 'Thank you for liking this demo!', 'success')">
-                        <svg viewBox="0 0 24 24" class="yt-action-icon" fill="currentColor"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>
-                        <span>Like</span>
-                    </div>
-                    <div class="yt-action-item active" onclick="showToast('Subscribed!', 'Welcome to AaiTech channel!', 'success')">
-                        <svg viewBox="0 0 24 24" class="yt-action-icon"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                        <span>Subscribe</span>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -379,46 +351,72 @@
                     </svg>
                 </div>
                 <div>
-                    <span class="chat-header-text">AI Analyst</span>
-                    <span class="chat-header-sub">Ask about your financial data</span>
+                    <div class="chat-header-headline">
+                        <span class="chat-header-text">AI Analyst</span>
+                        <div class="chat-live-badge" id="chatLiveBadge" title="Real-time WebSocket streaming active">
+                            <span class="live-dot"></span>
+                            <span id="chatStatusText">Live</span>
+                        </div>
+                    </div>
+                    <span class="chat-header-sub">Real-Time SEC 10-K & KPI Intelligence</span>
                 </div>
             </div>
-            <button class="chat-panel-toggle" id="chatToggleBtn" onclick="toggleChatPanel()" title="Collapse panel">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7"/>
-                </svg>
-            </button>
+            <div class="chat-header-actions">
+                <button class="chat-header-btn" id="clearChatBtn" onclick="clearChatHistory()" title="Restart conversation">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>
+                    </svg>
+                </button>
+                <button class="chat-panel-toggle" id="chatToggleBtn" onclick="toggleChatPanel()" title="Collapse panel">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7"/>
+                    </svg>
+                </button>
+            </div>
         </div>
 
         <div class="chat-messages" id="chatMessages">
             <!-- Welcome message -->
-            <div class="chat-msg bot-msg">
+            <div class="chat-msg bot-msg" id="welcomeMsg">
                 <div class="chat-avatar bot-avatar">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"/>
                     </svg>
                 </div>
                 <div class="chat-bubble bot-bubble">
-                    <p>Hello! I'm your AI Financial Analyst. Ask me anything about the ingested company reports — revenue trends, risk analysis, growth drivers, and more.</p>
+                    <p><strong>Hello! I'm your Real-Time AI Financial Analyst.</strong></p>
+                    <p style="margin-top: 6px;">Ask me anything about company financial performance, margins, risks, or strategic catalysts — streamed directly in real-time.</p>
                 </div>
             </div>
         </div>
 
         <div class="chat-input-area">
+            <!-- Real-time Quick Prompt Suggestions -->
+            <div class="chat-quick-chips" id="quickChips">
+                <button class="quick-chip" type="button" onclick="sendQuickPrompt('Compare Apple, Microsoft, and Tesla 2024 revenue and margins')">⚡ Compare Peers</button>
+                <button class="quick-chip" type="button" onclick="sendQuickPrompt('What drove Microsoft Cloud growth in 2024?')">☁️ Microsoft Cloud</button>
+                <button class="quick-chip" type="button" onclick="sendQuickPrompt('What are Apple top 10-K risk factors?')">⚠️ Apple Risks</button>
+                <button class="quick-chip" type="button" onclick="sendQuickPrompt('Analyze Tesla cash flow and energy storage')">🔋 Tesla Energy</button>
+                <button class="quick-chip" type="button" onclick="sendQuickPrompt('Which company had the highest operating profit margin?')">📊 Highest Margin</button>
+            </div>
+
             <div class="chat-context-bar">
-                <label class="chat-context-label">Company</label>
+                <label class="chat-context-label">Scope</label>
                 <select id="chatCompanySelect" class="chat-context-select">
-                    <option value="">All Companies</option>
+                    <option value="">All Companies (Comparative)</option>
                     {% for row in metrics %}
                     <option value="{{ row.company }}">{{ row.company }} ({{ row.year }})</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="chat-input-row">
-                <input type="text" id="chatInput" class="chat-text-input" placeholder="Ask about revenue, risks, growth..." autocomplete="off" />
-                <button id="sendBtn" class="chat-send-btn" onclick="sendMessage()" title="Send message">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <input type="text" id="chatInput" class="chat-text-input" placeholder="Ask about revenues, margins, risks in real-time..." autocomplete="off" />
+                <button id="sendBtn" class="chat-send-btn" onclick="handleSendOrStop()" title="Send message (Enter)">
+                    <svg class="send-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/>
+                    </svg>
+                    <svg class="stop-icon" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                        <rect x="6" y="6" width="12" height="12" rx="2" />
                     </svg>
                 </button>
             </div>
@@ -706,8 +704,16 @@ function switchCompany(companyName) {
 }
 
 // ----------------------------------------------------
-// Chat Panel – Toggle, Send, Render
+// Real-Time Chat Engine (WebSocket + SSE Fallback)
 // ----------------------------------------------------
+let chatSocket = null;
+let isStreaming = false;
+let currentBotMsgDiv = null;
+let currentTextAccumulator = "";
+let currentStatusPill = null;
+let abortController = null;
+let pingInterval = null;
+
 function toggleChatPanel() {
     const panel = document.getElementById('chatPanel');
     const tab = document.getElementById('chatCollapsedTab');
@@ -721,117 +727,576 @@ function toggleChatPanel() {
     } else {
         wrapper.classList.remove('chat-collapsed');
         tab.classList.remove('visible');
+        document.getElementById('chatInput')?.focus();
     }
 }
 
-async function sendMessage() {
+function updateLiveBadge(state, text) {
+    const badge = document.getElementById('chatLiveBadge');
+    const statusText = document.getElementById('chatStatusText');
+    if (!badge || !statusText) return;
+
+    badge.className = `chat-live-badge ${state}`;
+    statusText.textContent = text;
+}
+
+function initRealtimeWebSocket() {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/ws/chat`;
+
+    updateLiveBadge('connecting', 'Connecting...');
+
+    try {
+        chatSocket = new WebSocket(wsUrl);
+
+        chatSocket.onopen = () => {
+            updateLiveBadge('live', 'Live');
+            if (pingInterval) clearInterval(pingInterval);
+            pingInterval = setInterval(() => {
+                if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+                    chatSocket.send(JSON.stringify({ type: 'ping' }));
+                }
+            }, 25000);
+        };
+
+        chatSocket.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+
+                if (data.type === 'pong') return;
+
+                if (data.type === 'status') {
+                    if (currentStatusPill) {
+                        currentStatusPill.textContent = data.message;
+                    }
+                } else if (data.type === 'chunk') {
+                    handleStreamChunk(data.text);
+                } else if (data.type === 'done' || data.type === 'stopped') {
+                    finishStreaming(data.full_text || currentTextAccumulator);
+                } else if (data.type === 'error') {
+                    handleStreamError(data.message || 'An error occurred during streaming.');
+                }
+            } catch (err) {
+                console.error('Error handling WebSocket message:', err);
+            }
+        };
+
+        chatSocket.onerror = () => {
+            updateLiveBadge('fallback', 'SSE Fallback');
+        };
+
+        chatSocket.onclose = () => {
+            updateLiveBadge('disconnected', 'Reconnecting...');
+            if (pingInterval) clearInterval(pingInterval);
+            setTimeout(initRealtimeWebSocket, 3500);
+        };
+    } catch (err) {
+        updateLiveBadge('fallback', 'SSE Ready');
+    }
+}
+
+// Auto-initialize real-time WebSocket on load
+initRealtimeWebSocket();
+
+function handleSendOrStop() {
+    if (isStreaming) {
+        stopGeneration();
+    } else {
+        sendMessage();
+    }
+}
+
+function sendQuickPrompt(promptText) {
     const input = document.getElementById('chatInput');
-    const question = input.value.trim();
+    if (input) {
+        input.value = promptText;
+    }
+    sendMessage(promptText);
+}
+
+function clearChatHistory() {
+    const container = document.getElementById('chatMessages');
+    if (!container) return;
+    
+    if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+    }
+
+    container.innerHTML = `
+        <div class="chat-msg bot-msg" id="welcomeMsg">
+            <div class="chat-avatar bot-avatar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"/>
+                </svg>
+            </div>
+            <div class="chat-bubble bot-bubble">
+                <p><strong>Hello! I'm your Real-Time AI Financial Analyst.</strong></p>
+                <p style="margin-top: 6px;">Ask me anything about company financial performance, margins, risks, or strategic catalysts — streamed directly in real-time.</p>
+            </div>
+        </div>
+    `;
+    showToast('Chat Reset', 'Conversation history cleared.', 'success');
+}
+
+function setStreamingUI(streaming) {
+    isStreaming = streaming;
+    const sendBtn = document.getElementById('sendBtn');
+    const sendIcon = sendBtn?.querySelector('.send-icon');
+    const stopIcon = sendBtn?.querySelector('.stop-icon');
+
+    if (streaming) {
+        sendBtn?.classList.add('is-streaming');
+        if (sendIcon) sendIcon.style.display = 'none';
+        if (stopIcon) stopIcon.style.display = 'block';
+        updateLiveBadge('streaming', 'Streaming...');
+    } else {
+        sendBtn?.classList.remove('is-streaming');
+        if (sendIcon) sendIcon.style.display = 'block';
+        if (stopIcon) stopIcon.style.display = 'none';
+        updateLiveBadge('live', 'Live');
+    }
+}
+
+async function sendMessage(overrideText) {
+    if (isStreaming) return;
+
+    const input = document.getElementById('chatInput');
+    const question = (overrideText || input?.value || "").trim();
     if (!question) return;
 
     const companySelect = document.getElementById('chatCompanySelect');
     const selectedCompany = companySelect ? companySelect.value : '';
 
-    // Determine year from companyData if a company is selected
     let selectedYear = null;
     if (selectedCompany && companyData[selectedCompany]) {
         selectedYear = parseInt(companyData[selectedCompany].year) || null;
     }
 
-    // Add user message to chat
-    appendMessage('user', question);
-    input.value = '';
-    input.focus();
+    // Render user message bubble
+    appendUserMessage(question);
+    if (input) {
+        input.value = '';
+    }
 
-    // Show typing indicator
-    const typingId = showTypingIndicator();
+    // Create streaming bot message placeholder
+    createStreamingBotMessage();
+    setStreamingUI(true);
+
+    const payload = {
+        question: question,
+        company: selectedCompany || null,
+        year: selectedYear || null
+    };
+
+    // 1. Primary: Stream via WebSocket
+    if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+        chatSocket.send(JSON.stringify({
+            type: 'chat',
+            ...payload
+        }));
+        return;
+    }
+
+    // 2. Fallback: Stream via Server-Sent Events (SSE)
+    startSseStream(payload);
+}
+
+async function startSseStream(payload) {
+    abortController = new AbortController();
 
     try {
-        const payload = {
-            question: question
-        };
-        if (selectedCompany) {
-            payload.company = selectedCompany;
-        }
-        if (selectedYear) {
-            payload.year = selectedYear;
-        }
-
-        const response = await fetch('/api/chat', {
+        const response = await fetch('/api/chat/stream', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(payload),
+            signal: abortController.signal
         });
 
-        removeTypingIndicator(typingId);
-
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            const errorMsg = errorData.detail || `Server error (${response.status})`;
-            appendMessage('bot', `Sorry, I encountered an error: ${errorMsg}`);
-            return;
+            throw new Error(`HTTP ${response.status}`);
         }
 
-        const data = await response.json();
-        appendMessage('bot', data.answer || 'No response received.');
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let buffer = '';
 
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop();
+
+            for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                    try {
+                        const eventData = JSON.parse(line.slice(6));
+                        if (eventData.type === 'status') {
+                            if (currentStatusPill) {
+                                currentStatusPill.textContent = eventData.message;
+                            }
+                        } else if (eventData.type === 'chunk') {
+                            handleStreamChunk(eventData.text);
+                        } else if (eventData.type === 'done') {
+                            finishStreaming(currentTextAccumulator);
+                            return;
+                        } else if (eventData.type === 'error') {
+                            handleStreamError(eventData.message);
+                            return;
+                        }
+                    } catch (e) {}
+                }
+            }
+        }
+        finishStreaming(currentTextAccumulator);
     } catch (err) {
-        removeTypingIndicator(typingId);
-        appendMessage('bot', `Connection error: ${err.message}. Please make sure the server is running.`);
+        if (err.name !== 'AbortError') {
+            handleStreamError(`Streaming error: ${err.message}`);
+        }
     }
 }
 
-function appendMessage(role, text) {
+function stopGeneration() {
+    if (!isStreaming) return;
+
+    if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+        chatSocket.send(JSON.stringify({ type: 'stop' }));
+    }
+    if (abortController) {
+        abortController.abort();
+        abortController = null;
+    }
+
+    finishStreaming(currentTextAccumulator + " *(Stopped)*");
+}
+
+function handleStreamChunk(chunk) {
+    if (!currentBotMsgDiv) return;
+
+    if (currentStatusPill) {
+        currentStatusPill.style.display = 'none';
+    }
+
+    currentTextAccumulator += chunk;
+    const contentTarget = currentBotMsgDiv.querySelector('.bot-stream-content');
+    if (contentTarget) {
+        contentTarget.innerHTML = renderMarkdown(currentTextAccumulator) + `<span class="streaming-cursor">▌</span>`;
+    }
+
+    const container = document.getElementById('chatMessages');
+    if (container) {
+        container.scrollTop = container.scrollHeight;
+    }
+}
+
+function finishStreaming(finalText) {
+    if (!isStreaming) return;
+    setStreamingUI(false);
+
+    if (currentBotMsgDiv) {
+        const contentTarget = currentBotMsgDiv.querySelector('.bot-stream-content');
+        if (contentTarget) {
+            contentTarget.innerHTML = renderMarkdown(finalText || currentTextAccumulator);
+        }
+
+        if (currentStatusPill) {
+            currentStatusPill.remove();
+            currentStatusPill = null;
+        }
+
+        // Attach action toolbar (Copy, Speak, Timestamp)
+        attachMessageActions(currentBotMsgDiv, finalText || currentTextAccumulator);
+    }
+
+    currentBotMsgDiv = null;
+    currentTextAccumulator = "";
+}
+
+function handleStreamError(errMsg) {
+    setStreamingUI(false);
+    if (currentBotMsgDiv) {
+        const contentTarget = currentBotMsgDiv.querySelector('.bot-stream-content');
+        if (contentTarget) {
+            contentTarget.innerHTML = `<span style="color: var(--accent-red); font-weight: 600;">⚠️ ${escapeHtml(errMsg)}</span>`;
+        }
+        if (currentStatusPill) currentStatusPill.remove();
+    }
+    currentBotMsgDiv = null;
+    currentTextAccumulator = "";
+}
+
+function appendUserMessage(text) {
     const container = document.getElementById('chatMessages');
     const msgDiv = document.createElement('div');
-    msgDiv.className = `chat-msg ${role}-msg`;
-
-    const avatarSvg = role === 'user'
-        ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>`
-        : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"/></svg>`;
-
+    msgDiv.className = 'chat-msg user-msg';
     msgDiv.innerHTML = `
-        <div class="chat-avatar ${role}-avatar">${avatarSvg}</div>
-        <div class="chat-bubble ${role}-bubble">
+        <div class="chat-avatar user-avatar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+            </svg>
+        </div>
+        <div class="chat-bubble user-bubble">
             <p>${escapeHtml(text)}</p>
+        </div>
+    `;
+    container.appendChild(msgDiv);
+    container.scrollTop = container.scrollHeight;
+}
+
+function createStreamingBotMessage() {
+    const container = document.getElementById('chatMessages');
+    currentTextAccumulator = "";
+
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'chat-msg bot-msg';
+    msgDiv.innerHTML = `
+        <div class="chat-avatar bot-avatar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"/>
+            </svg>
+        </div>
+        <div class="chat-bubble bot-bubble">
+            <div class="chat-status-indicator">
+                <span class="status-spinner"></span>
+                <span class="status-text">Analyzing 10-K filings...</span>
+            </div>
+            <div class="bot-stream-content">
+                <span class="streaming-cursor">▌</span>
+            </div>
         </div>
     `;
 
     container.appendChild(msgDiv);
     container.scrollTop = container.scrollHeight;
+
+    currentBotMsgDiv = msgDiv;
+    currentStatusPill = msgDiv.querySelector('.chat-status-indicator');
+}
+
+function attachMessageActions(msgDiv, textToCopy) {
+    const bubble = msgDiv.querySelector('.chat-bubble');
+    if (!bubble || bubble.querySelector('.chat-msg-actions')) return;
+
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'chat-msg-actions';
+    actionsDiv.innerHTML = `
+        <span class="chat-msg-time">${timeStr}</span>
+        <button class="msg-action-btn" title="Copy text" onclick="copyMessageText(this, \`${escapeJsString(textToCopy)}\`)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+            <span>Copy</span>
+        </button>
+        <button class="msg-action-btn" title="Read aloud" onclick="speakMessageText(this, \`${escapeJsString(textToCopy)}\`)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.08-1.64.222-2.426.234-.847 1.058-1.354 1.938-1.354h2.34z"/>
+            </svg>
+            <span>Speak</span>
+        </button>
+    `;
+    bubble.appendChild(actionsDiv);
+}
+
+function escapeJsString(str) {
+    return (str || "").replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
+}
+
+function copyMessageText(btn, text) {
+    // Strip markdown formatting for clean clipboard paste
+    const cleanText = text
+        .replace(/###+\s/g, '')
+        .replace(/\*\*([^*]+)\*\*/g, '$1')
+        .replace(/`([^`]+)`/g, '$1')
+        .replace(/\|/g, ' ')
+        .trim();
+
+    navigator.clipboard.writeText(cleanText).then(() => {
+        const label = btn.querySelector('span');
+        if (label) {
+            const original = label.textContent;
+            label.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+                label.textContent = original;
+                btn.classList.remove('copied');
+            }, 2000);
+        }
+        showToast('Copied to Clipboard', 'Analysis text copied successfully.', 'success');
+    }).catch(() => {
+        showToast('Copy Failed', 'Clipboard access denied.', 'error');
+    });
+}
+
+function speakMessageText(btn, text) {
+    if (!window.speechSynthesis) {
+        showToast('Not Supported', 'Speech synthesis is not supported in this browser.', 'error');
+        return;
+    }
+
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        btn.classList.remove('speaking');
+        return;
+    }
+
+    const cleanText = text
+        .replace(/###+\s/g, '')
+        .replace(/\*\*([^*]+)\*\*/g, '$1')
+        .replace(/\|[-: ]+\|/g, '')
+        .replace(/\|/g, ', ')
+        .replace(/>/g, '')
+        .replace(/-\s/g, '. ')
+        .slice(0, 500); // Read core summary
+
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.rate = 1.05;
+    utterance.pitch = 1.0;
+
+    btn.classList.add('speaking');
+    utterance.onend = () => btn.classList.remove('speaking');
+    utterance.onerror = () => btn.classList.remove('speaking');
+
+    window.speechSynthesis.speak(utterance);
+}
+
+// ----------------------------------------------------
+// Markdown Parser for Real-time Financial Output
+// ----------------------------------------------------
+function renderMarkdown(raw) {
+    if (!raw) return "";
+
+    let lines = raw.split("\n");
+    let html = [];
+    let inTable = false;
+    let tableHeaders = [];
+    let tableRows = [];
+    let inList = false;
+
+    function flushTable() {
+        if (!inTable) return;
+        let tableHtml = '<div class="chat-table-wrapper"><table class="chat-table">';
+        if (tableHeaders.length > 0) {
+            tableHtml += '<thead><tr>';
+            tableHeaders.forEach(h => {
+                tableHtml += `<th>${formatInline(h.trim())}</th>`;
+            });
+            tableHtml += '</tr></thead>';
+        }
+        if (tableRows.length > 0) {
+            tableHtml += '<tbody>';
+            tableRows.forEach(row => {
+                tableHtml += '<tr>';
+                row.forEach(cell => {
+                    tableHtml += `<td>${formatInline(cell.trim())}</td>`;
+                });
+                tableHtml += '</tr>';
+            });
+            tableHtml += 'tbody>';
+        }
+        tableHtml += '</table></div>';
+        html.push(tableHtml);
+        inTable = false;
+        tableHeaders = [];
+        tableRows = [];
+    }
+
+    function flushList() {
+        if (inList) {
+            html.push('</ul>');
+            inList = false;
+        }
+    }
+
+    for (let i = 0; i < lines.length; i++) {
+        let line = lines[i].trim();
+
+        // Check Table row
+        if (line.startsWith('|') && line.endsWith('|')) {
+            flushList();
+            let cells = line.slice(1, -1).split('|');
+            // If separator row
+            if (cells.every(c => c.trim().match(/^[:\-]+$/))) {
+                continue;
+            }
+            if (!inTable) {
+                inTable = true;
+                tableHeaders = cells;
+            } else {
+                tableRows.push(cells);
+            }
+            continue;
+        } else if (inTable) {
+            flushTable();
+        }
+
+        // Check Headers
+        if (line.startsWith('### ')) {
+            flushList();
+            html.push(`<h4>${formatInline(line.slice(4))}</h4>`);
+            continue;
+        }
+        if (line.startsWith('## ')) {
+            flushList();
+            html.push(`<h3>${formatInline(line.slice(3))}</h3>`);
+            continue;
+        }
+
+        // Check Blockquote
+        if (line.startsWith('> ')) {
+            flushList();
+            html.push(`<blockquote>${formatInline(line.slice(2))}</blockquote>`);
+            continue;
+        }
+
+        // Check Unordered List
+        if (line.startsWith('- ') || line.startsWith('* ')) {
+            if (!inList) {
+                html.push('<ul class="chat-bullet-list">');
+                inList = true;
+            }
+            html.push(`<li>${formatInline(line.slice(2))}</li>`);
+            continue;
+        } else if (inList) {
+            flushList();
+        }
+
+        // Empty line
+        if (!line) {
+            continue;
+        }
+
+        // Regular paragraph
+        html.push(`<p>${formatInline(line)}</p>`);
+    }
+
+    if (inTable) flushTable();
+    if (inList) flushList();
+
+    return html.join('');
 }
 
 function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
 
-let typingCounter = 0;
-function showTypingIndicator() {
-    const container = document.getElementById('chatMessages');
-    const id = `typing-${++typingCounter}`;
-    const typingDiv = document.createElement('div');
-    typingDiv.className = 'chat-msg bot-msg';
-    typingDiv.id = id;
-    typingDiv.innerHTML = `
-        <div class="chat-avatar bot-avatar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
-        </div>
-        <div class="chat-bubble bot-bubble typing-bubble">
-            <div class="typing-dots">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-    `;
-    container.appendChild(typingDiv);
-    container.scrollTop = container.scrollHeight;
-    return id;
-}
-
-function removeTypingIndicator(id) {
-    const el = document.getElementById(id);
-    if (el) el.remove();
+function formatInline(str) {
+    if (!str) return '';
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+        .replace(/`([^`]+)`/g, '<code class="chat-code">$1</code>');
 }
 
 // Global Toast display helper

@@ -10,18 +10,19 @@ load_dotenv()
 
 def get_engine(database: str | None = None):
     """
-    Create PostgreSQL connection.
-    
-    Args:
-        database: Database name. Defaults to POSTGRES_DATABASE from .env.
+    Create PostgreSQL connection, or fall back to local SQLite if PostgreSQL is not configured.
     """
+    host = os.getenv("POSTGRES_HOST")
+    if not host:
+        db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "investor_intelligence.db"))
+        return create_engine(f"sqlite:///{db_path}")
+
     if database is None:
         database = os.getenv("POSTGRES_DATABASE")
     
-    host = os.getenv("POSTGRES_HOST")
-    port = os.getenv("POSTGRES_PORT")
-    user = os.getenv("POSTGRES_USER")
-    password = os.getenv("POSTGRES_PASSWORD")
+    port = os.getenv("POSTGRES_PORT", "5432")
+    user = os.getenv("POSTGRES_USER", "")
+    password = os.getenv("POSTGRES_PASSWORD", "")
 
     # URL-encode credentials to handle special characters (e.g., @ in password)
     encoded_user = quote(user, safe="")
@@ -33,37 +34,45 @@ def get_engine(database: str | None = None):
         "?sslmode=require"
     )
 
-    return create_engine(connection_string)
+    try:
+        engine = create_engine(connection_string)
+        with engine.connect() as conn:
+            pass
+        return engine
+    except Exception as e:
+        print(f"PostgreSQL connection failed ({e}). Falling back to local SQLite.")
+        db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "investor_intelligence.db"))
+        return create_engine(f"sqlite:///{db_path}")
 
 
 def create_database() -> None:
     """
-    Create the target database if it does not exist.
-    
-    Uses psycopg2 directly with autocommit to bypass SQLAlchemy transaction wrapping.
+    Create the target database if it does not exist (PostgreSQL only).
     """
-    target_db = os.getenv("POSTGRES_DATABASE")
     host = os.getenv("POSTGRES_HOST")
-    port = os.getenv("POSTGRES_PORT")
-    user = os.getenv("POSTGRES_USER")
-    password = os.getenv("POSTGRES_PASSWORD")
+    if not host:
+        print("Note: POSTGRES_HOST not configured. Using local database storage.")
+        return
+
+    target_db = os.getenv("POSTGRES_DATABASE")
+    port = os.getenv("POSTGRES_PORT", "5432")
+    user = os.getenv("POSTGRES_USER", "")
+    password = os.getenv("POSTGRES_PASSWORD", "")
     
     try:
-        # Connect to default 'postgres' database using psycopg2 directly
         conn = psycopg2.connect(
             host=host,
             port=port,
             database="postgres",
             user=user,
             password=password,
-            sslmode="require"
+            sslmode="require",
+            connect_timeout=5
         )
-        # Enable autocommit mode before executing CREATE DATABASE
         conn.autocommit = True
         
         cursor = conn.cursor()
         try:
-            # Check if database exists
             cursor.execute(
                 "SELECT 1 FROM pg_database WHERE datname = %s",
                 (target_db,)
@@ -79,5 +88,5 @@ def create_database() -> None:
             cursor.close()
             conn.close()
     except Exception as exc:
-        print(f"Failed to create database: {exc}")
-        raise
+        print(f"PostgreSQL notice: {exc}. The application will fall back to local database storage.")
+

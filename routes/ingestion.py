@@ -27,25 +27,31 @@ async def upload_document(
             buffer
         )
 
-        # Initialize embeddings and vector store
-        embeddings = AzureOpenAIEmbeddings(
-            model=os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT"),
-            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-            api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-            api_version=os.getenv("AZURE_OPENAI_API_VERSION")
-        )
+        # Initialize embeddings and vector store if Azure is configured
+        if os.getenv("AZURE_OPENAI_ENDPOINT") and os.getenv("AZURE_SEARCH_ENDPOINT"):
+            try:
+                embeddings = AzureOpenAIEmbeddings(
+                    model=os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT"),
+                    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+                    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+                    api_version=os.getenv("AZURE_OPENAI_API_VERSION")
+                )
 
-        vector_store = AzureAISearchVectorStore(
-            endpoint=os.getenv("AZURE_SEARCH_ENDPOINT"),
-            api_key=os.getenv("AZURE_SEARCH_API_KEY"),
-            index_name=os.getenv("AZURE_SEARCH_INDEX_NAME")
-        )
+                vector_store = AzureAISearchVectorStore(
+                    endpoint=os.getenv("AZURE_SEARCH_ENDPOINT"),
+                    api_key=os.getenv("AZURE_SEARCH_API_KEY"),
+                    index_name=os.getenv("AZURE_SEARCH_INDEX_NAME")
+                )
 
-        ingest_document(
-            pdf_path=str(file_path),
-            embeddings=embeddings,
-            vector_store=vector_store
-        )
+                ingest_document(
+                    pdf_path=str(file_path),
+                    embeddings=embeddings,
+                    vector_store=vector_store
+                )
+            except Exception as e:
+                print(f"Warning during vector ingestion: {e}")
+        else:
+            print(f"PDF saved to {file_path}. Azure credentials not configured for automatic embedding.")
 
     return {
         "message": "Document uploaded successfully",
