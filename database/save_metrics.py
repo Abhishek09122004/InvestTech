@@ -45,21 +45,34 @@ def save_metrics(
     )
     """
 
+    def _format_list_or_str(val) -> str:
+        if isinstance(val, list):
+            return "\n".join(str(item) for item in val if str(item).strip())
+        elif isinstance(val, str):
+            return val.strip()
+        return ""
+
     # Use both capitalized and lower‑case keys from the extraction model
     params = {
         "company": company,
         "year": str(year),
-        "revenue": metrics.get("Revenue") or metrics.get("revenue"),
-        "net_income": metrics.get("Net Income") or metrics.get("net_income"),
-        "operating_income": metrics.get("Operating Income") or metrics.get("operating_income"),
-        "cash_flow": metrics.get("Cash Flow from Operating Activities") or metrics.get("cash_flow"),
-        "total_assets": metrics.get("Total Assets") or metrics.get("total_assets"),
-        "total_liabilities": metrics.get("Total Liabilities") or metrics.get("total_liabilities"),
-        "risk_factors": "\n".join(metrics.get("Top Risk Factors", []) or metrics.get("risk_factors", [])),
-        "growth_drivers": "\n".join(metrics.get("Top Growth Drivers", []) or metrics.get("growth_drivers", []))
+        "revenue": str(metrics.get("Revenue") or metrics.get("revenue") or ""),
+        "net_income": str(metrics.get("Net Income") or metrics.get("net_income") or ""),
+        "operating_income": str(metrics.get("Operating Income") or metrics.get("operating_income") or ""),
+        "cash_flow": str(metrics.get("Cash Flow from Operating Activities") or metrics.get("cash_flow") or ""),
+        "total_assets": str(metrics.get("Total Assets") or metrics.get("total_assets") or ""),
+        "total_liabilities": str(metrics.get("Total Liabilities") or metrics.get("total_liabilities") or ""),
+        "risk_factors": _format_list_or_str(metrics.get("Top Risk Factors") or metrics.get("risk_factors")),
+        "growth_drivers": _format_list_or_str(metrics.get("Top Growth Drivers") or metrics.get("growth_drivers"))
     }
 
+    delete_query = """
+    DELETE FROM financial_metrics 
+    WHERE LOWER(company) = LOWER(:company) AND year = :year
+    """
+
     with engine.begin() as connection:
+        connection.execute(text(delete_query), {"company": company, "year": str(year)})
         connection.execute(text(query), params)
 
     print(

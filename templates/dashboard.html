@@ -393,11 +393,11 @@
         <div class="chat-input-area">
             <!-- Real-time Quick Prompt Suggestions -->
             <div class="chat-quick-chips" id="quickChips">
-                <button class="quick-chip" type="button" onclick="sendQuickPrompt('Compare Apple, Microsoft, and Tesla 2024 revenue and margins')">⚡ Compare Peers</button>
+                <button class="quick-chip" type="button" onclick="sendQuickPrompt('Compare revenues and margins across all companies')">⚡ Compare All Peers</button>
+                <button class="quick-chip" type="button" onclick="sendQuickPrompt('Analyze Tata Motors revenue, demerger, and EV growth')">🚗 Tata Motors</button>
                 <button class="quick-chip" type="button" onclick="sendQuickPrompt('What drove Microsoft Cloud growth in 2024?')">☁️ Microsoft Cloud</button>
                 <button class="quick-chip" type="button" onclick="sendQuickPrompt('What are Apple top 10-K risk factors?')">⚠️ Apple Risks</button>
                 <button class="quick-chip" type="button" onclick="sendQuickPrompt('Analyze Tesla cash flow and energy storage')">🔋 Tesla Energy</button>
-                <button class="quick-chip" type="button" onclick="sendQuickPrompt('Which company had the highest operating profit margin?')">📊 Highest Margin</button>
             </div>
 
             <div class="chat-context-bar">
@@ -461,7 +461,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ----------------------------------------------------
     function parseNumericValue(valStr) {
         if (!valStr) return 0;
-        let cleaned = valStr.replace(/[$,\s]/g, '');
+        let cleaned = valStr.replace(/[$₹€£,\s]/g, '');
         let isNegative = false;
         if (cleaned.startsWith('(') && cleaned.endsWith(')')) {
             isNegative = true;
@@ -579,45 +579,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
         xhr.upload.onprogress = (e) => {
             if (e.lengthComputable) {
-                const percent = Math.round((e.loaded / e.total) * 45);
+                const percent = Math.round((e.loaded / e.total) * 60);
                 progressBarFill.style.width = `${percent}%`;
                 progressPercent.textContent = `${percent}%`;
+                if (percent >= 55) {
+                    progressStatus.textContent = 'Extracting KPIs & storing in database...';
+                }
             }
         };
 
         xhr.onload = () => {
             if (xhr.status >= 200 && xhr.status < 300) {
-                progressBarFill.style.width = '75%';
-                progressPercent.textContent = '75%';
-                progressStatus.textContent = 'Extracting KPIs...';
-                
-                let extractProgress = 75;
-                const interval = setInterval(() => {
-                    if (extractProgress < 95) {
-                        extractProgress += 2;
-                        progressBarFill.style.width = `${extractProgress}%`;
-                        progressPercent.textContent = `${extractProgress}%`;
+                let companyName = "Report";
+                try {
+                    const res = JSON.parse(xhr.responseText);
+                    if (res.company) {
+                        companyName = res.company;
                     }
-                }, 400);
+                } catch(e) {}
+
+                progressBarFill.style.width = '100%';
+                progressPercent.textContent = '100%';
+                progressStatus.textContent = `Stored metrics for ${companyName}!`;
+
+                showToast('Ingestion Complete', `Successfully extracted and stored KPIs for ${companyName}.`, 'success');
 
                 setTimeout(() => {
-                    clearInterval(interval);
-                    progressBarFill.style.width = '100%';
-                    progressPercent.textContent = '100%';
-                    progressStatus.textContent = 'Success!';
-                    
-                    showToast('Ingestion Complete', `Successfully extracted metrics for report.`, 'success');
-                    
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1200);
-                }, 4000);
+                    window.location.reload();
+                }, 1000);
             } else {
                 progressBarFill.style.width = '0%';
                 progressContainer.style.display = 'none';
                 try {
                     const res = JSON.parse(xhr.responseText);
-                    showToast('Ingestion Failed', res.message || 'Error processing report.', 'error');
+                    showToast('Ingestion Failed', res.detail || res.message || 'Error processing report.', 'error');
                 } catch(e) {
                     showToast('Ingestion Failed', 'Internal server error occurred.', 'error');
                 }

@@ -1,10 +1,9 @@
 import shutil
-from fastapi import APIRouter, File, UploadFile
+from fastapi import APIRouter, File, UploadFile, HTTPException
 from pathlib import Path
 import os
-from langchain_openai import AzureOpenAIEmbeddings
-from vectorstore.azure_ai_search import AzureAISearchVectorStore
-from ingestion.ingest_documents import ingest_document
+
+from ingestion.extract_metrics import extract_metrics_from_pdf
 
 router = APIRouter()
 
@@ -21,15 +20,25 @@ async def upload_document(
 
     file_path = upload_dir / file.filename
 
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(
-            file.file,
-            buffer
-        )
+    try:
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(
+                file.file,
+                buffer
+            )
 
-        # Initialize embeddings and vector store if Azure is configured
+        print(f"[Upload] File saved to {file_path}. Processing and extracting metrics...")
+
+        # 1. High-accuracy financial KPI extraction and database persistence
+        extraction_result = extract_metrics_from_pdf(str(file_path))
+
+        # 2. Vector store indexing if Azure credentials are configured
         if os.getenv("AZURE_OPENAI_ENDPOINT") and os.getenv("AZURE_SEARCH_ENDPOINT"):
             try:
+                from langchain_openai import AzureOpenAIEmbeddings
+                from vectorstore.azure_ai_search import AzureAISearchVectorStore
+                from ingestion.ingest_documents import ingest_document
+
                 embeddings = AzureOpenAIEmbeddings(
                     model=os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT"),
                     azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
@@ -51,9 +60,20 @@ async def upload_document(
             except Exception as e:
                 print(f"Warning during vector ingestion: {e}")
         else:
-            print(f"PDF saved to {file_path}. Azure credentials not configured for automatic embedding.")
+            print(f"[Upload] Azure Search credentials not configured. Local database and markdown persistence complete.")
 
-    return {
-        "message": "Document uploaded successfully",
-        "file_name": file.filename
-    }
+        return {
+            "status": "success",
+            "message": f"Document '{file.filename}' processed and stored successfully.",
+            "file_name": file.filename,
+            "company": extraction_result.get("company", ""),
+            "year": extraction_result.get("year", ""),
+            "metrics": extraction_result.get("metrics", {})
+        }
+
+    except Exception as exc:
+        print(f"[Upload Error] {exc}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to process and store document: {str(exc)}"
+        )
